@@ -1,0 +1,54 @@
+{
+  "loadDevice": [
+    {
+      "deviceName": "AH-600",
+      "connectorType": "TCPIP",
+      "protocol": "HL7",
+      "hl7Version": "2.3",
+      "communicationMode": "BiDirection",
+      "HIS_deviceID": "58022",
+      "HIS_unitID": "55",
+
+      "TCPIP_params": {
+        "deviceIP": "10.10.1.12",
+        "blindIp": "0.0.0.0",
+        "tcpPort": 8001,
+        "mode": "SERVER",
+        "socketTimeout": 30000,
+        "clientReconnect": "YES",
+        "mllpEnabled": "YES",
+        "startBlock": "0x0B",
+        "endBlock": "0x1C",
+        "carriageReturn": "0x0D",
+        "logDirectoryPath": "./logs"
+      }
+    }
+  ],
+
+  "LIS_ID": "iHMS",
+
+  "apiType": "HTTPS",
+
+  "appServer": "https://ihms.health.rajasthan.gov.in/IHMS",
+
+  "lisApi": {
+
+    "sampleFetchEndpoint":
+    "/api/rest/pathoOrder/getPathoWorklist",
+
+    "worklistEndpoint":
+    "/api/rest/pathoOrder/getPathoWorklist",
+
+    "resultUploadEndpoint":
+    "/api/rest/pathoOrder/addMachineWiseResult",
+
+    "token":
+    "8b0f0601-dc79-4afb-b4b4-b62d2813f1d2",
+
+    "connectTimeout":  30000,
+
+    "readTimeout": 60000,
+
+    "threadPoolSize": 20
+  }
+}
