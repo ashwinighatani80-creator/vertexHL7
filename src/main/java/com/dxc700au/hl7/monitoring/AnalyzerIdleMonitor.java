@@ -254,7 +254,7 @@ public class AnalyzerIdleMonitor {
                                 state.lastActivityTime()
                                         .format(
                                                 DateTimeFormatter.ofPattern(
-                                                        "yyyy-MM-dd HH:mm:ss"
+                                                        "yyyyMMddHHmmssSSS"
                                                 )
                                         )
                         );

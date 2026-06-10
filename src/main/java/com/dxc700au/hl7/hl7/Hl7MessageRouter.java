@@ -5,7 +5,9 @@ import ca.uhn.hl7v2.model.v231.message.ACK;
 import ca.uhn.hl7v2.model.v231.message.ORU_R01;
 import ca.uhn.hl7v2.model.v231.message.QRY_Q02;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
-
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Type;
+import ca.uhn.hl7v2.util.Terser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +36,16 @@ public class Hl7MessageRouter {
             Message message
     ) throws Exception {
 
+        log.info(
+                "ROUTER RECEIVED CLASS = {}",
+                message.getClass().getName()
+        );
+
+        log.info(
+                "ROUTER MESSAGE NAME = {}",
+                message.getName()
+        );
+
         long startTime =
                 System.currentTimeMillis();
 
@@ -44,6 +56,9 @@ public class Hl7MessageRouter {
 
         String controlId =
                 extractControlId(message);
+
+        log.info("MESSAGE TYPE = {}", messageType);
+        log.info("MESSAGE CLASS = {}", message.getClass().getName());
 
         log.info(
                 """
@@ -231,44 +246,24 @@ public class Hl7MessageRouter {
      * EXTRACT MESSAGE TYPE
      * ============================================================
      */
-    private String extractMessageType(
-            Message message
-    ) {
+    private String extractMessageType(Message message) {
 
         try {
-
-            MSH msh =
-                    (MSH) message.get("MSH");
-
-            return msh.getMessageType()
-                    .getMessageType()
-                    .getValue();
-
+            Terser terser = new Terser(message);
+            return terser.get("/MSH-9-1");
         } catch (Exception e) {
-
+            log.error("FAILED TO EXTRACT MESSAGE TYPE", e);
             return "UNKNOWN";
         }
     }
 
-    /*
-     * ============================================================
-     * EXTRACT CONTROL ID
-     * ============================================================
-     */
-    private String extractControlId(
-            Message message
-    ) {
+    private String extractControlId(Message message) {
 
         try {
-
-            MSH msh =
-                    (MSH) message.get("MSH");
-
-            return msh.getMessageControlID()
-                    .getValue();
-
+            Terser terser = new Terser(message);
+            return terser.get("/MSH-10");
         } catch (Exception e) {
-
+            log.error("FAILED TO EXTRACT CONTROL ID", e);
             return "UNKNOWN";
         }
     }

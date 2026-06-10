@@ -1,8 +1,13 @@
 package com.dxc700au.hl7.hl7;
 
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.v231.message.ORU_R01;
+import ca.uhn.hl7v2.model.v231.message.QRY_Q02;
 import ca.uhn.hl7v2.parser.PipeParser;
 
+import ca.uhn.hl7v2.util.Terser;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
@@ -41,7 +46,43 @@ public class Hl7Parser {
              * PARSE HL7
              * ============================================================
              */
-            Message parsedMessage = parser.parse(rawMessage);
+            Message parsedMessage;
+
+            if (rawMessage.contains("QRY^Q02")) {
+
+                log.info("FORCING PARSE AS QRY_Q02");
+
+                QRY_Q02 qry = new QRY_Q02();
+
+                parser.parse(qry, rawMessage);
+
+                parsedMessage = qry;
+
+            }
+            else if (rawMessage.contains("ORU^R01")) {
+
+                log.info("FORCING PARSE AS ORU_R01");
+
+                ORU_R01 oru = new ORU_R01();
+
+                parser.parse(oru, rawMessage);
+
+                parsedMessage = oru;
+
+            }
+            else {
+
+                parsedMessage = parser.parse(rawMessage);
+            }
+
+            Terser terser = new Terser(parsedMessage);
+
+            log.info("MSH-9 = {}", terser.get("/MSH-9"));
+            log.info("MSH-9-1 = {}", terser.get("/MSH-9-1"));
+            log.info("MSH-9-2 = {}", terser.get("/MSH-9-2"));
+            log.info("MSH-12 = {}", terser.get("/MSH-12"));
+
+            log.info("PARSED CLASS = {}", parsedMessage.getClass().getName());
 
             String messageType = parsedMessage.getName();
 

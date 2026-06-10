@@ -211,7 +211,7 @@ public class Hl7AuditLogger {
                 LocalDateTime.now()
                         .format(
                                 DateTimeFormatter.ofPattern(
-                                        "yyyy-MM-dd HH:mm:ss"
+                                        "yyyyMMddHHmmssSSS"
                                 )
                         ),
                 exception

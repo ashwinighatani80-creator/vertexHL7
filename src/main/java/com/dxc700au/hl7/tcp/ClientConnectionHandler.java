@@ -3,6 +3,7 @@ package com.dxc700au.hl7.tcp;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
 
+import ca.uhn.hl7v2.util.Terser;
 import com.dxc700au.hl7.config.MachineConfigLoader;
 import com.dxc700au.hl7.hl7.AckMessageBuilder;
 import com.dxc700au.hl7.hl7.DuplicateMessageDetector;
@@ -179,11 +180,13 @@ public class ClientConnectionHandler {
                  * EXTRACT MSH
                  * ============================================================
                  */
-                MSH msh = (MSH) parsedMessage.get("MSH");
+                Terser terser = new Terser(parsedMessage);
 
-                String controlId = msh.getMessageControlID().getValue();
+                String controlId =
+                        terser.get("/MSH-10");
 
-                String messageType = msh.getMessageType().getMessageType().getValue();
+                String messageType =
+                        terser.get("/MSH-9-1");
 
                 /*
                  * ============================================================
@@ -415,11 +418,13 @@ public class ClientConnectionHandler {
 
                 if (parsedMessage != null) {
 
-                    MSH msh = (MSH) parsedMessage.get("MSH");
+                    Terser terser = new Terser(parsedMessage);
 
-                    String controlId = msh.getMessageControlID().getValue();
+                    String controlId =
+                            terser.get("/MSH-10");
 
-                    String errorAck = ackBuilder.buildErrorAck(parsedMessage, e);
+                    String errorAck =
+                            ackBuilder.buildErrorAck(parsedMessage, e);
 
                     synchronized (socket) {
 

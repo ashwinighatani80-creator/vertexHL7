@@ -1,19 +1,15 @@
 package com.dxc700au.hl7.api;
-
 import com.dxc700au.hl7.config.MachineConfigLoader;
 import com.dxc700au.hl7.dto.ResultUploadRequest;
 import com.dxc700au.hl7.dto.SampleResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -336,6 +332,10 @@ public class LisApiClient {
                     testCode={}
                     testValue={}
                     """, request.getSampleNumber(), request.getTestIdentifier(), request.getTestVal());
+            log.info(
+                    "FULL REQUEST JSON = {}",
+                    objectMapper.writeValueAsString(request)
+            );
 
             /*
              * ============================================================

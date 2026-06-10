@@ -1,4 +1,5 @@
 package com.dxc700au.hl7.hl7;
+
 import ca.uhn.hl7v2.model.v231.message.ORU_R01;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
 import ca.uhn.hl7v2.util.Terser;
@@ -151,6 +152,10 @@ public class OruMessageHandler {
                     sanitize(
                             terser.get("/.OBR-2-1")
                     );
+            log.error("OBR-2     = {}", terser.get("/.OBR-2"));
+            log.error("OBR-2-1   = {}", terser.get("/.OBR-2-1"));
+            log.error("OBR-3     = {}", terser.get("/.OBR-3"));
+            log.error("OBR-3-1   = {}", terser.get("/.OBR-3-1"));
 
             if (sampleNumber.isBlank()) {
 
@@ -352,22 +357,38 @@ public class OruMessageHandler {
                         unit
                 );
 
-                request.setLowHigh(
-                        abnormalFlag
-                );
-
+//                request.setLowHigh(
+//                        abnormalFlag
+//                );
+//
                 request.setResultDate(
                         resultDate
                 );
-
-                request.setResultstatus(
-                        resultStatus
+//
+//                request.setResultstatus(
+//                        resultStatus
+//                );
+//
+//                request.setResultabnormalflags(
+//                        abnormalFlag
+//                );
+                request.setLowHigh(
+                        "null".equalsIgnoreCase(abnormalFlag)
+                                ? null
+                                : abnormalFlag
                 );
 
                 request.setResultabnormalflags(
-                        abnormalFlag
+                        "null".equalsIgnoreCase(abnormalFlag)
+                                ? null
+                                : abnormalFlag
                 );
 
+                request.setResultstatus(
+                        resultStatus == null || resultStatus.isBlank()
+                                ? "F"
+                                : resultStatus
+                );
                 /*
                  * ============================================================
                  * RESULT VALUE
@@ -382,6 +403,27 @@ public class OruMessageHandler {
                  * ASYNC PROCESS
                  * ============================================================
                  */
+                log.info("""
+                                FINAL REQUEST
+                                
+                                sampleNumber={}
+                                testIdentifier={}
+                                testVal={}
+                                unit={}
+                                lowHigh={}
+                                resultabnormalflags={}
+                                resultstatus={}
+                                resultDate={}
+                                """,
+                        request.getSampleNumber(),
+                        request.getTestIdentifier(),
+                        request.getTestVal(),
+                        request.getUnit(),
+                        request.getLowHigh(),
+                        request.getResultabnormalflags(),
+                        request.getResultstatus(),
+                        request.getResultDate()
+                );
                 asyncResultProcessor.process(
                         request
                 );

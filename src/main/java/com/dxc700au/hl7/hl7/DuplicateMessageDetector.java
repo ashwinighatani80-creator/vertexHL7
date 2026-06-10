@@ -3,6 +3,7 @@ package com.dxc700au.hl7.hl7;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v231.segment.MSH;
 
+import ca.uhn.hl7v2.util.Terser;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
@@ -186,17 +187,14 @@ public class DuplicateMessageDetector {
 
         try {
 
-            MSH msh =
-                    (MSH) message.get("MSH");
+            Terser terser =
+                    new Terser(message);
 
             String controlId =
-                    msh.getMessageControlID()
-                            .getValue();
+                    terser.get("/MSH-10");
 
             String messageType =
-                    msh.getMessageType()
-                            .getMessageType()
-                            .getValue();
+                    terser.get("/MSH-9-1");
 
             if (controlId == null
                     || controlId.isBlank()) {

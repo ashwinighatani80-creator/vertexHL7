@@ -68,14 +68,12 @@ public class Hl7TcpServer {
     @PostConstruct
     public void startServer() {
 
-        log.info(
-                """
-                        
-                        ============================================================
-                        HL7 TCP SERVER INITIALIZATION STARTED
-                        ============================================================
-                        """
-        );
+        log.info("""
+                
+                ============================================================
+                HL7 TCP SERVER INITIALIZATION STARTED
+                ============================================================
+                """);
 
         executorService.submit(() -> {
 
@@ -106,8 +104,7 @@ public class Hl7TcpServer {
 
                     } catch (InterruptedException ex) {
 
-                        Thread.currentThread()
-                                .interrupt();
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
@@ -119,153 +116,103 @@ public class Hl7TcpServer {
      * MAIN TCP SERVER
      * ============================================================
      */
-    private void startTcpServer()
-            throws Exception {
+    private void startTcpServer() throws Exception {
 
-        JsonNode device =
-                configLoader.getFirstDevice();
+        JsonNode device = configLoader.getFirstDevice();
 
         /*
          * ============================================================
          * CONFIG
          * ============================================================
          */
-        int port =
-                configLoader.getTcpPort();
+        int port = configLoader.getTcpPort();
 
-        int timeout =
-                configLoader.getSocketTimeout();
+        int timeout = configLoader.getSocketTimeout();
 
-        String deviceName =
-                device.path("deviceName")
-                        .asText("UNKNOWN");
+        String deviceName = device.path("deviceName").asText("UNKNOWN");
 
-        String protocol =
-                device.path("protocol")
-                        .asText("HL7");
+        String protocol = device.path("protocol").asText("HL7");
 
-        String version =
-                device.path("hl7Version")
-                        .asText("2.3.1");
+        String version = device.path("hl7Version").asText("2.3.1");
 
-        String connectorType =
-                device.path("connectorType")
-                        .asText("TCPIP");
+        String connectorType = device.path("connectorType").asText("TCPIP");
 
-        String communicationMode =
-                device.path("communicationMode")
-                        .asText("BiDirection");
+        String communicationMode = device.path("communicationMode").asText("BiDirection");
 
-        JsonNode tcp =
-                device.path("TCPIP_params");
+        JsonNode tcp = device.path("TCPIP_params");
 
-        String transportMode =
-                tcp.path("mllpEnabled")
-                        .asText("YES")
-                        .equalsIgnoreCase("YES")
-                        ? "MLLP"
-                        : "RAW_TCP";
+        String transportMode = tcp.path("mllpEnabled").asText("YES").equalsIgnoreCase("YES") ? "MLLP" : "RAW_TCP";
 
-        String socketMode =
-                tcp.path("mode")
-                        .asText("SERVER");
+        String socketMode = tcp.path("mode").asText("SERVER");
 
-        String bindIp =
-                tcp.path("blindIP")
-                        .asText("0.0.0.0");
+        String bindIp = tcp.path("blindIp").asText("0.0.0.0");
 
         /*
          * ============================================================
          * HOST INFO
          * ============================================================
          */
-        String hostIp =
-                InetAddress.getLocalHost()
-                        .getHostAddress();
+        String hostIp = InetAddress.getLocalHost().getHostAddress();
 
-        String hostName =
-                InetAddress.getLocalHost()
-                        .getHostName();
+        String hostName = InetAddress.getLocalHost().getHostName();
 
         /*
          * ============================================================
          * PROTOCOL MODE LOGS
          * ============================================================
          */
-        log.info(
-                """
-                        
-                        ============================================================
-                        ANALYZER PROTOCOL CONFIGURATION
-                        
-                        deviceName={}
-                        protocol={}
-                        hl7Version={}
-                        transport={}
-                        socketMode={}
-                        connectorType={}
-                        communicationMode={}
-                        
-                        ============================================================
-                        """,
-                deviceName,
-                protocol,
-                version,
-                transportMode,
-                socketMode,
-                connectorType,
-                communicationMode
-        );
+        log.info("""
+                
+                ============================================================
+                ANALYZER PROTOCOL CONFIGURATION
+                
+                deviceName={}
+                protocol={}
+                hl7Version={}
+                transport={}
+                socketMode={}
+                connectorType={}
+                communicationMode={}
+                
+                ============================================================
+                """, deviceName, protocol, version, transportMode, socketMode, connectorType, communicationMode);
 
         /*
          * ============================================================
          * NETWORK CONFIG LOGS
          * ============================================================
          */
-        log.info(
-                """
-                        
-                        ============================================================
-                        TCP NETWORK CONFIGURATION
-                        
-                        bindIP={}
-                        serverPort={}
-                        socketTimeout={}ms
-                        maxConnections={}
-                        
-                        ============================================================
-                        """,
-                bindIp,
-                port,
-                timeout,
-                MAX_CONNECTIONS
-        );
+        log.info("""
+                
+                ============================================================
+                TCP NETWORK CONFIGURATION
+                
+                bindIP={}
+                serverPort={}
+                socketTimeout={}ms
+                maxConnections={}
+                
+                ============================================================
+                """, bindIp, port, timeout, MAX_CONNECTIONS);
 
         /*
          * ============================================================
          * JVM ENVIRONMENT LOGS
          * ============================================================
          */
-        log.info(
-                """
-                        
-                        ============================================================
-                        SERVER ENVIRONMENT
-                        
-                        hostName={}
-                        hostIp={}
-                        javaVersion={}
-                        osName={}
-                        fileEncoding={}
-                        
-                        ============================================================
-                        """,
-                hostName,
-                hostIp,
-                System.getProperty("java.version"),
-                System.getProperty("os.name"),
-                System.getProperty("file.encoding")
-        );
+        log.info("""
+                
+                ============================================================
+                SERVER ENVIRONMENT
+                
+                hostName={}
+                hostIp={}
+                javaVersion={}
+                osName={}
+                fileEncoding={}
+                
+                ============================================================
+                """, hostName, hostIp, System.getProperty("java.version"), System.getProperty("os.name"), System.getProperty("file.encoding"));
 
         /*
          * ============================================================
@@ -273,13 +220,7 @@ public class Hl7TcpServer {
          * ============================================================
          */
 
-                serverSocket =
-                new ServerSocket(
-                        port,
-                        MAX_CONNECTIONS,
-                        InetAddress.getByName(bindIp)
-                );
-
+        serverSocket = new ServerSocket(port, MAX_CONNECTIONS, InetAddress.getByName(bindIp));
 
 
         serverSocket.setReuseAddress(true);
@@ -289,25 +230,20 @@ public class Hl7TcpServer {
          * SERVER STARTED
          * ============================================================
          */
-        log.info(
-                """
-                        
-                        ============================================================
-                        HL7 TCP SERVER STARTED SUCCESSFULLY
-                        
-                        protocol={}
-                        transport={}
-                        listeningPort={}
-                        status=READY
-                        
-                        WAITING FOR ANALYZER CONNECTION...
-                        
-                        ============================================================
-                        """,
-                protocol,
-                transportMode,
-                port
-        );
+        log.info("""
+                
+                ============================================================
+                HL7 TCP SERVER STARTED SUCCESSFULLY
+                
+                protocol={}
+                transport={}
+                listeningPort={}
+                status=READY
+                
+                WAITING FOR ANALYZER CONNECTION...
+                
+                ============================================================
+                """, protocol, transportMode, port);
 
         /*
          * ============================================================
@@ -316,47 +252,43 @@ public class Hl7TcpServer {
          */
         while (running.get()) {
 
-            log.info(
-                    """
-                            
-                            SERVER SOCKET STATE
-                            
-                            activeConnections={}
-                            maxConnections={}
-                            serverStatus=LISTENING
-                            
-                            """,
-                    activeConnections.get(),
-                    MAX_CONNECTIONS
-            );
+            log.info("""
+                    
+                    SERVER SOCKET STATE
+                    
+                    activeConnections={}
+                    maxConnections={}
+                    serverStatus=LISTENING
+                    
+                    """, activeConnections.get(), MAX_CONNECTIONS);
 
-            Socket socket =
-                    serverSocket.accept();
+            log.info("SERVER WAITING ON {}:{}", bindIp, port);
+
+            Socket socket = serverSocket.accept();
+
+            log.info("TCP CONNECTION RECEIVED FROM {}:{}",
+                    socket.getInetAddress().getHostAddress(),
+                    socket.getPort());
 
             /*
              * ============================================================
              * CONNECTION LIMIT
              * ============================================================
              */
-            if (activeConnections.get()
-                    >= MAX_CONNECTIONS) {
+            if (activeConnections.get() >= MAX_CONNECTIONS) {
 
-                log.error(
-                        """
-                                
-                                ============================================================
-                                CONNECTION LIMIT EXCEEDED
-                                
-                                activeConnections={}
-                                maxConnections={}
-                                
-                                REJECTING NEW CONNECTION
-                                
-                                ============================================================
-                                """,
-                        activeConnections.get(),
-                        MAX_CONNECTIONS
-                );
+                log.error("""
+                        
+                        ============================================================
+                        CONNECTION LIMIT EXCEEDED
+                        
+                        activeConnections={}
+                        maxConnections={}
+                        
+                        REJECTING NEW CONNECTION
+                        
+                        ============================================================
+                        """, activeConnections.get(), MAX_CONNECTIONS);
 
                 socket.close();
 
@@ -375,40 +307,29 @@ public class Hl7TcpServer {
             socket.setSoTimeout(timeout);
 
 
-
-            int currentConnections =
-                    activeConnections.incrementAndGet();
+            int currentConnections = activeConnections.incrementAndGet();
 
             /*
              * ============================================================
              * CONNECTION LOG
              * ============================================================
              */
-            log.info(
-                    """
-                            
-                            ============================================================
-                            ANALYZER CONNECTED
-                            
-                            clientIp={}
-                            clientPort={}
-                            
-                            socketKeepAlive={}
-                            tcpNoDelay={}
-                            socketTimeout={}ms
-                            
-                            activeConnections={}
-                            
-                            ============================================================
-                            """,
-                    socket.getInetAddress()
-                            .getHostAddress(),
-                    socket.getPort(),
-                    socket.getKeepAlive(),
-                    socket.getTcpNoDelay(),
-                    timeout,
-                    currentConnections
-            );
+            log.info("""
+                    
+                    ============================================================
+                    ANALYZER CONNECTED
+                    
+                    clientIp={}
+                    clientPort={}
+                    
+                    socketKeepAlive={}
+                    tcpNoDelay={}
+                    socketTimeout={}ms
+                    
+                    activeConnections={}
+                    
+                    ============================================================
+                    """, socket.getInetAddress().getHostAddress(), socket.getPort(), socket.getKeepAlive(), socket.getTcpNoDelay(), timeout, currentConnections);
 
 
             /*
@@ -431,32 +352,23 @@ public class Hl7TcpServer {
                      */
                     try {
 
-                        if (socket != null
-                                && !socket.isClosed()) {
+                        if (socket != null && !socket.isClosed()) {
 
                             socket.close();
 
-                            log.info(
-                                    """
-                                            
-                                            SOCKET CLOSED SUCCESSFULLY
-                                            
-                                            clientIp={}
-                                            clientPort={}
-                                            
-                                            """,
-                                    socket.getInetAddress()
-                                            .getHostAddress(),
-                                    socket.getPort()
-                            );
+                            log.info("""
+                                    
+                                    SOCKET CLOSED SUCCESSFULLY
+                                    
+                                    clientIp={}
+                                    clientPort={}
+                                    
+                                    """, socket.getInetAddress().getHostAddress(), socket.getPort());
                         }
 
                     } catch (Exception e) {
 
-                        log.error(
-                                "SOCKET CLOSE FAILED",
-                                e
-                        );
+                        log.error("SOCKET CLOSE FAILED", e);
                     }
 
                     /*
@@ -464,21 +376,17 @@ public class Hl7TcpServer {
                      * DECREMENT ACTIVE CONNECTIONS
                      * ============================================================
                      */
-                    int remaining =
-                            activeConnections.decrementAndGet();
+                    int remaining = activeConnections.decrementAndGet();
 
-                    log.info(
-                            """
-                                    
-                                    ============================================================
-                                    CONNECTION CLOSED
-                                    
-                                    remainingConnections={}
-                                    
-                                    ============================================================
-                                    """,
-                            remaining
-                    );
+                    log.info("""
+                            
+                            ============================================================
+                            CONNECTION CLOSED
+                            
+                            remainingConnections={}
+                            
+                            ============================================================
+                            """, remaining);
                 }
             });
         }
@@ -492,49 +400,38 @@ public class Hl7TcpServer {
     @PreDestroy
     public void stopServer() {
 
-        log.info(
-                """
-                        
-                        ============================================================
-                        HL7 TCP SERVER SHUTDOWN STARTED
-                        
-                        closingServerSocket=true
-                        activeConnections={}
-                        
-                        ============================================================
-                        """,
-                activeConnections.get()
-        );
+        log.info("""
+                
+                ============================================================
+                HL7 TCP SERVER SHUTDOWN STARTED
+                
+                closingServerSocket=true
+                activeConnections={}
+                
+                ============================================================
+                """, activeConnections.get());
 
         running.set(false);
 
         try {
 
-            if (serverSocket != null
-                    && !serverSocket.isClosed()) {
+            if (serverSocket != null && !serverSocket.isClosed()) {
 
                 serverSocket.close();
 
-                log.info(
-                        "SERVER SOCKET CLOSED SUCCESSFULLY"
-                );
+                log.info("SERVER SOCKET CLOSED SUCCESSFULLY");
             }
 
         } catch (Exception e) {
 
-            log.error(
-                    "SERVER SOCKET CLOSE FAILED",
-                    e
-            );
+            log.error("SERVER SOCKET CLOSE FAILED", e);
         }
 
-        log.info(
-                """
-                        
-                        ============================================================
-                        HL7 TCP SERVER SHUTDOWN COMPLETED
-                        ============================================================
-                        """
-        );
+        log.info("""
+                
+                ============================================================
+                HL7 TCP SERVER SHUTDOWN COMPLETED
+                ============================================================
+                """);
     }
 }

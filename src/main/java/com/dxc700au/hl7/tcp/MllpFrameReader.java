@@ -46,15 +46,12 @@ public class MllpFrameReader {
      * READ MESSAGE
      * ============================================================
      */
-    public String readMessage(
-            InputStream inputStream,
-            OutputStream outputStream,
-            String sessionId
-    ) throws Exception {
+    public String readMessage(InputStream inputStream, OutputStream outputStream, String sessionId) throws Exception {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         int character;
+
 
         boolean started = false;
 
@@ -68,11 +65,19 @@ public class MllpFrameReader {
                         ============================================================
                         [{}] WAITING FOR TRANSPORT DATA
                         ============================================================
+                       
                         """,
                 sessionId
         );
 
         while ((character = inputStream.read()) != -1) {
+
+            log.info(
+                    "[{}] RAW BYTE => DEC={} HEX=0x{}",
+                    sessionId,
+                    character,
+                    String.format("%02X", character)
+            );
 
             /*
              * ============================================================
@@ -279,23 +284,19 @@ public class MllpFrameReader {
                 continue;
             }
 
-            /*
-             * ============================================================
-             * IGNORE PRE-START BYTES
-             * ============================================================
-             */
-            /*
-             * ============================================================
-             * IGNORE PRE-START BYTES
-             * ============================================================
-             */
-            if (!started) {
 
-                log.info(
-                        "[{}] IGNORING BYTE BEFORE START BLOCK | DEC={} | HEX=0x{}",
-                        sessionId,
+            if (!started) {
+                log.error(
+                        """
+                        UNKNOWN PREAMBLE BYTE
+                
+                        DEC={}
+                        HEX=0x{}
+                
+                        EXPECTED START BLOCK = 0x0B
+                        """,
                         character,
-                        Integer.toHexString(character).toUpperCase()
+                        String.format("%02X", character)
                 );
 
                 continue;
@@ -322,8 +323,7 @@ public class MllpFrameReader {
                         sessionId
                 );
 
-                int trailing =
-                        inputStream.read();
+                int trailing = inputStream.read();
 
                 /*
                  * ============================================================
@@ -426,8 +426,7 @@ public class MllpFrameReader {
          * SOCKET CLOSED
          * ============================================================
          */
-        if (character == -1
-                && buffer.size() == 0) {
+        if (character == -1 && buffer.size() == 0) {
 
             log.warn(
                     """
@@ -442,9 +441,7 @@ public class MllpFrameReader {
                     sessionId
             );
 
-            throw new EOFException(
-                    "SOCKET DISCONNECTED"
-            );
+            throw new EOFException("EOF EXCEPTION --> SOCKET DISCONNECTED");
         }
 
         /*
@@ -452,8 +449,7 @@ public class MllpFrameReader {
          * PARTIAL FRAME DETECTED
          * ============================================================
          */
-        if (started
-                && !endBlockReceived) {
+        if (started && !endBlockReceived) {
 
             log.error(
                     """
@@ -488,10 +484,7 @@ public class MllpFrameReader {
          * CONVERT FRAME
          * ============================================================
          */
-        String message =
-                buffer.toString(
-                        StandardCharsets.UTF_8
-                );
+        String message = buffer.toString(StandardCharsets.UTF_8);
 
         /*
          * ============================================================

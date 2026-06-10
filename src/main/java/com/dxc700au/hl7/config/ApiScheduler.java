@@ -81,7 +81,7 @@ public class ApiScheduler {
 
             log.info("STATUS : {}", response.getStatusCode());
 
-            log.info("BODY : {}", response.getBody());
+//            log.info("BODY : {}", response.getBody());
             log.info("Records received________________________");
 
         } catch (HttpStatusCodeException e) {
